@@ -1,0 +1,54 @@
+# Dependencies
+## Ignore packages folder
+[Pp]ackages/
+*.nupkg
+
+# Build results
+## Ignore build results
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio temporary files
+## Ignore user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Ignore Visual Studio files
+.vs/
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.log
+*.scc
+
+# Other
+_Chutzpah*
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cache
+*.cer
+*.pubxml
+*.pubxml.user
