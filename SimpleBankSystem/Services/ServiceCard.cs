@@ -14,7 +14,11 @@ namespace SimpleBankSystem.Services
     {
         private readonly CardRepository _cardRepository;
         private readonly TransactionRepository _transactionRepository;
-        public ServiceCard(CardRepository cardRepository , TransactionRepository transactionRepository)
+
+        
+        private static readonly Dictionary<string, int> _failedLoginAttempts = new Dictionary<string, int>();
+
+        public ServiceCard(CardRepository cardRepository, TransactionRepository transactionRepository)
         {
             _cardRepository = cardRepository;
             _transactionRepository = transactionRepository;
@@ -22,71 +26,117 @@ namespace SimpleBankSystem.Services
 
         public void Transfer(string sourceCardNumber, string destinationCardNumber, float depositAmount)
         {
+           
+            if (sourceCardNumber.Length != 16)
+            {
+                throw new InvalidCardNumberLengthException("The sourceCard number must be 16 digits.");
+            }
+            if (destinationCardNumber.Length != 16)
+            {
+                throw new InvalidCardNumberLengthException("The destinationCard number must be 16 digits.");
+            }
+            if (depositAmount <= 0)
+            {
+                throw new NegativeTransferAmountException("The transfer amount must be greater than zero.");
+            }
+
             Card? sourceCard = _cardRepository.GetCardByCardNumber(sourceCardNumber);
             Card? destinationCard = _cardRepository.GetCardByCardNumber(destinationCardNumber);
-            if (sourceCard == null ) 
+
+            if (sourceCard == null)
             {
-                throw new CardNotFoundException("The sourceCard is not valid..");
+                throw new CardNotFoundException("The sourceCard is not valid.");
             }
             if (destinationCard == null)
             {
-                throw new CardNotFoundException("The destinationCard is not valid..");
+                throw new CardNotFoundException("The destinationCard is not valid.");
             }
-            if (sourceCard.Balance < depositAmount) 
-            {
-                throw new NotEnoughBalanceException("Insufficient card balance");
-            }
-            if (!sourceCard.IsActive) 
+            if (!sourceCard.IsActive)
             {
                 throw new CardInactiveException("The origin card is inactive.");
             }
-            if (!destinationCard.IsActive) 
+            if (!destinationCard.IsActive)
             {
                 throw new CardInactiveException("The destinationCard is inactive.");
             }
-            if (depositAmount<0) 
+            if (sourceCard.Balance < depositAmount)
             {
-                throw new NegativeTransferAmountException("The transfer amount must not be negative.");
+                throw new NotEnoughBalanceException("Insufficient card balance");
             }
-            if (sourceCardNumber.Length<16)
+
+            sourceCard.Balance -= depositAmount;
+            destinationCard.Balance += depositAmount;
+
+            Transaction transaction = new Transaction
             {
-                throw new InvalidCardNumberLengthException("The sourceCard number is less than 16 digits.");
-            }
-            if (destinationCardNumber.Length<16) 
-            {
-                throw new InvalidCardNumberLengthException("The destinationCard number is less than 16 digits.");
-            }
-            sourceCard.Balance  = sourceCard.Balance - depositAmount;
-            destinationCard.Balance = destinationCard.Balance + depositAmount;
-            Transaction transaction = new Transaction 
-            {
-               Amount = depositAmount,
-               SourceCardId = sourceCard.Id,
-               DestinationCardId = destinationCard.Id,
-               TransactionDate = DateTime.Now,
-               IsSuccessful = true,
+                Amount = depositAmount,
+                SourceCardId = sourceCard.Id,
+                DestinationCardId = destinationCard.Id,
+                TransactionDate = DateTime.Now,
+                IsSuccessful = true,
+                SourceCardNumber = sourceCard.CardNumber,
+                DestinationCardNumber = destinationCard.CardNumber
             };
+
             _transactionRepository.AddTransaction(transaction);
             _cardRepository.UpdateCard(sourceCard);
             _cardRepository.UpdateCard(destinationCard);
             _cardRepository.SaveChanges();
         }
-        public void Authentication(string cardNumber , string password) 
+
+        public void Authentication(string cardNumber, string password)
         {
-            Card? card= _cardRepository.GetCardByCardNumber(cardNumber);
-            if (card == null) 
+            if (cardNumber.Length != 16)
             {
-                throw new CardNotFoundException("No card with this card number was found.");
+                throw new InvalidCardNumberLengthException("The cardNumber must be 16 digits.");
             }
-            if (card.Password!=password)
+
+            Card? card = _cardRepository.GetCardByCardNumber(cardNumber);
+
+            if (card == null)
             {
-                throw new PasswordWrongException("The card password is incorrect.");
+                throw new CardNotFoundException("Your card number or password is correct.");
             }
-            if (cardNumber.Length < 16)
+
+            if (!card.IsActive)
             {
-                throw new InvalidCardNumberLengthException("The cardNumber is less than 16 digits.");
+                throw new CardInactiveException("This card has been blocked due to multiple failed login attempts.");
             }
-            LocalStorage.LoginCard= card;
+
+            if (card.Password != password)
+            {
+             
+                if (!_failedLoginAttempts.ContainsKey(cardNumber))
+                {
+                    _failedLoginAttempts[cardNumber] = 0;
+                }
+
+                _failedLoginAttempts[cardNumber]++; 
+
+                if (_failedLoginAttempts[cardNumber] >= 3)
+                {
+                    card.IsActive = false; 
+                    _cardRepository.UpdateCard(card);
+                    _cardRepository.SaveChanges();
+                    throw new CardInactiveException("Your card has been blocked due to 3 failed password attempts.");
+                }
+
+                throw new PasswordWrongException($"Your card number or password is correct. Attempt {_failedLoginAttempts[cardNumber]} of 3.");
+            }
+
+            
+            if (_failedLoginAttempts.ContainsKey(cardNumber))
+            {
+                _failedLoginAttempts.Remove(cardNumber);
+            }
+
+            LocalStorage.LoginCard = card;
+        }
+
+      
+        public List<Transaction> GetTransactionsForCard(int cardId)
+        {
+            return _transactionRepository.GetTransactionsByCardId(cardId);
         }
     }
 }
