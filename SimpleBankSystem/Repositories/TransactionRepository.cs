@@ -11,6 +11,15 @@ namespace SimpleBankSystem.Repositories
 {
     public class TransactionRepository
     {
-             
+        private readonly AppDbContext _context;
+        public TransactionRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public void AddTransaction(Transaction transaction) 
+        {
+           _context.Transactions.Add(transaction);
+        }
     }
 }

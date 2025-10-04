@@ -37,6 +37,9 @@ namespace SimpleBankSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FailedAttemptCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("HolderName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

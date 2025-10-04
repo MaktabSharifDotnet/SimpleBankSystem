@@ -12,8 +12,8 @@ using SimpleBankSystem.DataAccess;
 namespace SimpleBankSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251004042115_AddFailedAttemptCountToCard")]
-    partial class AddFailedAttemptCountToCard
+    [Migration("20251004084236_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

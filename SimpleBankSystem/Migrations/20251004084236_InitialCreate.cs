@@ -21,7 +21,8 @@ namespace SimpleBankSystem.Migrations
                     HolderName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Balance = table.Column<float>(type: "real", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FailedAttemptCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

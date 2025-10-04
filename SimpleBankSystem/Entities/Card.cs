@@ -18,6 +18,8 @@ namespace SimpleBankSystem.Entities
         public bool IsActive { get; set; }
         public string Password { get; set; }
 
+        public int FailedAttemptCount { get; set; }
+
         [InverseProperty("SourceCard")]
         public List<Transaction> SentTransactions { get; set; } = [];
 
