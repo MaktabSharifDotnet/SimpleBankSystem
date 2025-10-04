@@ -11,24 +11,6 @@ namespace SimpleBankSystem.Repositories
     
     public class CardRepository
     {
-        private readonly AppDbContext _context;
-        public CardRepository(AppDbContext context)
-        {
-            _context = context;
-        }
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
-        }
-
-        public Card? GetCardByCardNumber(string cardNumber)
-        {
-            return _context.Cards.FirstOrDefault(c => c.CardNumber == cardNumber);
-        }
-        public void UpdateCard(Card card)
-        {
-            _context.Cards.Update(card);
-
-        }
+       
     }
 }
