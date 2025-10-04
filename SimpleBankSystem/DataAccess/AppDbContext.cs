@@ -34,6 +34,5 @@ namespace SimpleBankSystem.DataAccess
                 .HasForeignKey(t => t.DestinationCardId)
                 .OnDelete(DeleteBehavior.NoAction); 
         }
-
     }
 }

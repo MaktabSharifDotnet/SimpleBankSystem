@@ -15,7 +15,7 @@ namespace SimpleBankSystem.Services
         private readonly CardRepository _cardRepository;
         private readonly TransactionRepository _transactionRepository;
 
-        
+   
         private static readonly Dictionary<string, int> _failedLoginAttempts = new Dictionary<string, int>();
 
         public ServiceCard(CardRepository cardRepository, TransactionRepository transactionRepository)
@@ -23,7 +23,6 @@ namespace SimpleBankSystem.Services
             _cardRepository = cardRepository;
             _transactionRepository = transactionRepository;
         }
-
         public void Transfer(string sourceCardNumber, string destinationCardNumber, float depositAmount)
         {
            
@@ -83,7 +82,6 @@ namespace SimpleBankSystem.Services
             _cardRepository.UpdateCard(destinationCard);
             _cardRepository.SaveChanges();
         }
-
         public void Authentication(string cardNumber, string password)
         {
             if (cardNumber.Length != 16)
@@ -132,8 +130,6 @@ namespace SimpleBankSystem.Services
 
             LocalStorage.LoginCard = card;
         }
-
-      
         public List<Transaction> GetTransactionsForCard(int cardId)
         {
             return _transactionRepository.GetTransactionsByCardId(cardId);

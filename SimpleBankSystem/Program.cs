@@ -31,18 +31,15 @@ while (true)
         {
             Console.WriteLine(ex.Message);
         }
-        catch (VallidationException ex)
+        catch (InvalidCardNumberLengthException ex)
         {
             Console.WriteLine(ex.Message);
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-        }
+       
     }
     else
     {
-        Console.WriteLine("\n--- Main Menu ---");
+        Console.WriteLine("--- Main Menu ---");
         Console.WriteLine("1. Transfer Money");
         Console.WriteLine("2. Show Transactions");
         Console.WriteLine("Please select an option:");
@@ -81,7 +78,6 @@ while (true)
                         Console.WriteLine($"An unexpected error occurred: {ex.Message}");
                     }
                     break;
-
                 case 2:
                     Console.WriteLine("\n--- Your Transactions ---");
                     int cardId = LocalStorage.LoginCard.Id;
@@ -95,16 +91,6 @@ while (true)
                     {
                         foreach (var tx in transactions)
                         {
-                            
-                            string status;
-                            if (tx.IsSuccessful)
-                            {
-                                status = "Successful";
-                            }
-                            else
-                            {
-                                status = "Failed";
-                            }
 
                             string type;
                             if (tx.SourceCardId == cardId)
@@ -115,13 +101,21 @@ while (true)
                             {
                                 type = "Received";
                             }
+                            string status;
+                            if (tx.IsSuccessful)
+                            {
+                                status = "Successful";
+                            }
+                            else
+                            {
+                                status = "Failed";
+                            }
                             
-
-                            Console.WriteLine($"Type: {type} | From: {tx.SourceCardNumber} | To: {tx.DestinationCardNumber} | Amount: {tx.Amount} | Date: {tx.TransactionDate.ToShortDateString()} | Status: {status}");
+                             Console.WriteLine($"Type: {type} | From: {tx.SourceCardNumber} | To: {tx.DestinationCardNumber} | Amount: {tx.Amount} " +
+                                $"| Date: {tx.TransactionDate.ToShortDateString()} | Status: {status}");
                         }
                     }
                     break;
-
                 default:
                     Console.WriteLine("Invalid option. Please enter 1 or 2.");
                     break;

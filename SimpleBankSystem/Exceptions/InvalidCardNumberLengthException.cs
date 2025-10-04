@@ -10,6 +10,7 @@ namespace SimpleBankSystem.Exceptions
     {
         public InvalidCardNumberLengthException(string message) : base(message)
         {
+
         }
     }
 }
