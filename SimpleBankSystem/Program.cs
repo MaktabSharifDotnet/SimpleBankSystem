@@ -85,7 +85,28 @@ while (true)
                     }
                     break;
                 case 2:
+                    try 
+                    {
+                        List<Transaction> transactions=serviceCard.GetTransactions();
+                        if (transactions.Count==0)
+                        {
+                            Console.WriteLine("No transaction has been made yet.");
+                        }
+                        else 
+                        {
+                            foreach (var transaction in transactions)
+                            {
 
+                                string type = transaction.SourceCardNumber == LocalStorage.LoginCard.CardNumber ? "Sent" : "Received";
+                                string status = transaction.IsSuccessful ? "Successful" : "Failed";                             
+                                Console.WriteLine($"Type: {type} | From: {transaction.SourceCardNumber} | To: {transaction.DestinationCardNumber} | Amount: {transaction.Amount} | Date: {transaction.TransactionDate.ToShortDateString()} | Status: {status}");
+                            }
+                        }
+                    }
+                    catch(NotCardLoginException e) 
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                     break;
             }
         }

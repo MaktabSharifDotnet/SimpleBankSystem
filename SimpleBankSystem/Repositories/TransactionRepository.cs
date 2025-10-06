@@ -17,9 +17,18 @@ namespace SimpleBankSystem.Repositories
             _context = context;
         }
 
-        public void AddTransaction(Transaction transaction) 
+        public void AddTransaction(Transaction transaction)
         {
-           _context.Transactions.Add(transaction);
+            _context.Transactions.Add(transaction);
+        }
+
+        public List<Transaction> GetTransactions(string cardNumber)
+        {
+            return _context.Transactions
+                  .AsNoTracking()
+                  .Where(t => t.DestinationCardNumber == cardNumber || t.SourceCardNumber == cardNumber)
+                  .OrderByDescending(t => t.TransactionDate)
+                  .ToList();
         }
     }
 }

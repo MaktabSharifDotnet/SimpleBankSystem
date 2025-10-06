@@ -122,5 +122,14 @@ namespace SimpleBankSystem.Services
             _transactionRepository.AddTransaction(transaction);
             _cardRepository.SaveChange();
         }
+
+        public List<Transaction> GetTransactions() 
+        {
+            if (LocalStorage.LoginCard == null)
+            {
+                throw new NotCardLoginException("No card has been logged in.");
+            }
+           return _transactionRepository.GetTransactions(LocalStorage.LoginCard.CardNumber);
+        }
     }
 }

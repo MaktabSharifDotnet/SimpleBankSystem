@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,6 @@ namespace SimpleBankSystem.Entities
         public Card DestinationCard { get; set; }
         public int DestinationCardId { get; set; }
 
-
+    
     }
 }
