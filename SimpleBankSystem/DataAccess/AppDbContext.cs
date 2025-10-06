@@ -16,7 +16,7 @@ namespace SimpleBankSystem.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                "Server=ALI\\SQLEXPRESS;Database=SimpleBankSystem;Integrated Security=True;Encrypt=Mandatory;TrustServerCertificate=True;");
+              "Server=DESKTOP-M2BLLND\\SQLEXPRESS;Database=SimpleBankSystem;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

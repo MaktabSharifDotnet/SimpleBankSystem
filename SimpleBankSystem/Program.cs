@@ -108,6 +108,10 @@ while (true)
                         Console.WriteLine(e.Message);
                     }
                     break;
+                case 3:
+                    LocalStorage.LoginCard = null;
+                    break;
+
             }
         }
         catch (FormatException)
@@ -122,4 +126,5 @@ void ShowMenu()
     Console.WriteLine("Please enter the number of the desired option.");
     Console.WriteLine("1.Transfer");
     Console.WriteLine("2.Reporting");
+    Console.WriteLine("3.Exit");
 }
