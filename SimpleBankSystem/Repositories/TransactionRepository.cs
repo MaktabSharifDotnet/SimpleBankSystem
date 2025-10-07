@@ -30,5 +30,20 @@ namespace SimpleBankSystem.Repositories
                   .OrderByDescending(t => t.TransactionDate)
                   .ToList();
         }
+
+        public float GetTotalSentAmountToday(int cardId)
+        {
+           
+            var today = DateTime.Today;            
+            var tomorrow = today.AddDays(1);
+
+            return _context.Transactions
+                .AsNoTracking()
+                .Where(t => t.TransactionDate >= today 
+                && t.TransactionDate < tomorrow 
+                && t.SourceCardId==cardId
+                &&t.IsSuccessful)
+                .Sum(t => t.Amount);
+        }
     }
 }

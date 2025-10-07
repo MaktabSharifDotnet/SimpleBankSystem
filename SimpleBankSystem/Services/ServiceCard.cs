@@ -21,6 +21,7 @@ namespace SimpleBankSystem.Services
             _cardRepository = cardRepository;
             _transactionRepository = transactionRepository;
         }
+
         public void Authentication(string cardNumber, string password)
         {
             Card? card=_cardRepository.GetCard(cardNumber);
@@ -61,6 +62,7 @@ namespace SimpleBankSystem.Services
             _cardRepository.SaveChange();
             LocalStorage.LoginCard = card;
         }
+
         public void Transfer(string sourceCard , string destinationCard , float transferAmount) 
         {
             Card? sourceCardDb = _cardRepository.GetCard(sourceCard);
@@ -102,13 +104,30 @@ namespace SimpleBankSystem.Services
             {
                 throw new CardInactiveException("destinationCard is inActive");
             }
-            if (sourceCardDb.Balance<transferAmount)
+            
+
+            float totalAmount=_transactionRepository.GetTotalSentAmountToday(LocalStorage.LoginCard.Id);
+            if (totalAmount+ transferAmount > 250) 
+            {
+                throw new DailyTransferLimitExceededException("You have reached the daily transfer limit ($250).");
+            }
+
+            float fee = 0;
+            if (transferAmount>1000)
+            {
+                fee = 0.015f * transferAmount;
+            }
+            else if (transferAmount <= 1000)
+            {
+                fee = 0.005f * transferAmount;
+            }
+            float totalDeduction = transferAmount + fee;
+            if (sourceCardDb.Balance < totalDeduction)
             {
                 throw new NotEnoughBalanceException("Insufficient card balance");
             }
-
-            sourceCardDb.Balance = sourceCardDb.Balance-transferAmount;
-            destinationCardDb.Balance=destinationCardDb.Balance+transferAmount;
+            sourceCardDb.Balance -= totalDeduction; 
+            destinationCardDb.Balance += transferAmount;
             Transaction transaction = new Transaction
             {
                 TransactionDate = DateTime.Now,
@@ -131,5 +150,75 @@ namespace SimpleBankSystem.Services
             }
            return _transactionRepository.GetTransactions(LocalStorage.LoginCard.CardNumber);
         }
+
+        public void ChangeCardPassword(string newPass) 
+        {
+            if (LocalStorage.LoginCard==null)
+            {
+                throw new NotCardLoginException("No card has been logged in.");
+            }
+            bool verifyPass =LocalStorage.LoginCard.SetPass(newPass);
+            if (verifyPass)
+            {
+                _cardRepository.SaveChange();
+            }
+            else 
+            {
+                throw new InvalidPassException("The password must be 4 digits and not repeated.");
+            }
+            
+        }
+
+        public string? GetHolderNameByCardNumber(string cardNumber) 
+        {
+            if (LocalStorage.LoginCard == null)
+            {
+                throw new NotCardLoginException("No card has been logged in.");
+            }
+           string holderName = _cardRepository.GetHolderNameByCardNumber(cardNumber);
+            if (holderName==null)
+            {
+                throw new CardNotFoundException("No card with this card number was found.");
+            }
+            return holderName;
+        }
+        public void GenerateAndSaveVerificationCode()
+        {
+           
+            Random random = new Random();
+
+            int code = random.Next(10000, 100000);
+            
+            DateTime creationTime = DateTime.Now;
+          
+            string contentToSave = $"{code};{creationTime}";
+                       
+            File.WriteAllText("verification_code.txt", contentToSave);
+        }
+        public void VerifyCode(string userInput)
+        {
+            
+            if (!File.Exists("verification_code.txt"))
+            {
+                throw new Exception("Verification code was not generated.");
+            }
+            string fileContent = File.ReadAllText("verification_code.txt");
+         
+            string[] parts = fileContent.Split(';');
+            string savedCode = parts[0];
+            DateTime creationTime = DateTime.Parse(parts[1]); 
+           
+            if (DateTime.Now > creationTime.AddMinutes(5))
+            {
+                throw new Exception("Verification code has expired.");
+            }
+          
+            if (savedCode != userInput)
+            {
+                throw new Exception("Verification code is incorrect.");
+            }
+           
+        }
+
     }
 }

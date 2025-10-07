@@ -19,7 +19,6 @@ namespace SimpleBankSystem.Entities
         public int SourceCardId { get; set; }
         public Card DestinationCard { get; set; }
         public int DestinationCardId { get; set; }
-
     
     }
 }

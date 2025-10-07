@@ -1,4 +1,5 @@
-﻿using SimpleBankSystem.DataAccess;
+﻿using Microsoft.EntityFrameworkCore;
+using SimpleBankSystem.DataAccess;
 using SimpleBankSystem.Entities;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,14 @@ namespace SimpleBankSystem.Repositories
         {
            return _context.Cards.FirstOrDefault(c=>c.CardNumber==cardNumber);
         }
-
+        public string? GetHolderNameByCardNumber(string cardNumber)
+        {
+            return _context.Cards
+                .AsNoTracking() 
+                .Where(c => c.CardNumber == cardNumber)
+                .Select(c => c.HolderName) 
+                .FirstOrDefault(); 
+        }
         public void UpdateCard(Card card) 
         {
             _context.Cards.Update(card);
