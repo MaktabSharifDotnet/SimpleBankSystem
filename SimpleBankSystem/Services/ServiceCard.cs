@@ -106,6 +106,11 @@ namespace SimpleBankSystem.Services
             {
                 throw new NotEnoughBalanceException("Insufficient card balance");
             }
+            float totalAmount =_transactionRepository.GetTotalSentAmountToday(LocalStorage.LoginCard.Id);
+            if (totalAmount+ transferAmount>250)
+            {
+                throw new DailyTransferLimitExceededException("The daily card-to-card limit is $250.");
+            }
 
             sourceCardDb.Balance = sourceCardDb.Balance-transferAmount;
             destinationCardDb.Balance=destinationCardDb.Balance+transferAmount;
@@ -131,5 +136,7 @@ namespace SimpleBankSystem.Services
             }
            return _transactionRepository.GetTransactions(LocalStorage.LoginCard.CardNumber);
         }
+
+       
     }
 }

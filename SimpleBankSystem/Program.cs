@@ -83,6 +83,10 @@ while (true)
                     {
                         Console.WriteLine(e.Message);
                     }
+                    catch(DailyTransferLimitExceededException e) 
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                     break;
                 case 2:
                     try 
