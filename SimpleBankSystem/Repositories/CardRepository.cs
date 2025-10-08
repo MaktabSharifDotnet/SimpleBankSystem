@@ -33,7 +33,14 @@ namespace SimpleBankSystem.Repositories
             _context.Cards.Update(card);
         }
 
-       
+        public string? GetNameDesCard(string cardNumber) 
+        {
+          return  _context.Cards
+                .AsNoTracking()
+                .Where(c => c.CardNumber == cardNumber)
+                .Select(c=>c.HolderName)
+                .FirstOrDefault();
+        }
 
     }
 }

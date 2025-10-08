@@ -49,15 +49,55 @@ while (true)
             switch (option)
             {
                 case 1:
-                    
-                    Console.WriteLine("please enter destinationCard");
-                    string destinationCode = Console.ReadLine();
-                    Console.WriteLine("please enter amount:");
-                    float amount = float.Parse(Console.ReadLine());
+                    string destinationCard;
+                   
+                    Console.WriteLine("please enter destinationCard or type exit for exit");
+                    while (true)
+                    {
+                         destinationCard = Console.ReadLine();
+                        if (destinationCard.ToLower() == "exit")
+                        {
+                            break;
+                        }
+                        try 
+                        {
+                           string nameCardnumber = serviceCard.GetNameDesCard(destinationCard);
+                           Console.WriteLine(nameCardnumber);
+                            Console.WriteLine("is correct name cardnumber 1.yes 2.no");
+                          
+                            
+                                int result = int.Parse(Console.ReadLine());
+                                if (result == 1)
+                                {
+
+                                    break;
+                                }
+                            
+                           
+                        }
+                        catch(CardNotFoundException e) 
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("invalid option please enter number 1.yes 2.no");
+                        }
+
+
+                    }
+                   
                     try 
                     {
-                        serviceCard.Transfer(LocalStorage.LoginCard.CardNumber, destinationCode, amount);
-                        Console.WriteLine("transfer is done");
+                        float amount=0f;
+                        if (destinationCard != "exit")
+                        {
+                            Console.WriteLine("please enter amount:");
+                            amount = float.Parse(Console.ReadLine());
+                            serviceCard.Transfer(LocalStorage.LoginCard.CardNumber, destinationCard, amount);
+                            Console.WriteLine("transfer is done");
+                        }
+                        
                     }
                     catch (NotCardLoginException e) 
                     {

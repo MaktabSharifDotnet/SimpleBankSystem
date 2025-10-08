@@ -166,6 +166,16 @@ namespace SimpleBankSystem.Services
 
         }
 
-       
+        public string? GetNameDesCard(string cardNumber) 
+        {
+          string name= _cardRepository.GetNameDesCard(cardNumber);
+            if (name==null)
+            {
+                throw new CardNotFoundException("There is no card with this card number.");
+            }
+            return name;
+        }
+
+        
     }
 }
