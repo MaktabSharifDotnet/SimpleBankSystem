@@ -64,8 +64,16 @@ namespace SimpleBankSystem.Services
         public void Transfer(string sourceCard , string destinationCard , float transferAmount) 
         {
             Card? sourceCardDb = _cardRepository.GetCard(sourceCard);
-            Card? destinationCardDb =_cardRepository.GetCard(destinationCard); 
-
+            Card? destinationCardDb =_cardRepository.GetCard(destinationCard);
+            float fee = 0f;
+            if (transferAmount >= 1000)
+            {
+                fee = 0.015f * transferAmount;
+            }
+            else if (transferAmount < 1000)
+            {
+                fee = 0.005f * transferAmount;
+            }
             if (LocalStorage.LoginCard==null)
             {
                 throw new NotCardLoginException("No card has been logged in.");
@@ -102,7 +110,7 @@ namespace SimpleBankSystem.Services
             {
                 throw new CardInactiveException("destinationCard is inActive");
             }
-            if (sourceCardDb.Balance<transferAmount)
+            if (sourceCardDb.Balance<transferAmount + fee)
             {
                 throw new NotEnoughBalanceException("Insufficient card balance");
             }
@@ -111,8 +119,9 @@ namespace SimpleBankSystem.Services
             {
                 throw new DailyTransferLimitExceededException("The daily card-to-card limit is $250.");
             }
-
-            sourceCardDb.Balance = sourceCardDb.Balance-transferAmount;
+            
+          
+            sourceCardDb.Balance = sourceCardDb.Balance-transferAmount - fee;
             destinationCardDb.Balance=destinationCardDb.Balance+transferAmount;
             Transaction transaction = new Transaction
             {
