@@ -137,6 +137,26 @@ namespace SimpleBankSystem.Services
            return _transactionRepository.GetTransactions(LocalStorage.LoginCard.CardNumber);
         }
 
+        public void ChangePass(string newPass) 
+        {
+            if (LocalStorage.LoginCard == null)
+            {
+                throw new NotCardLoginException("No card has been logged in.");
+            }
+
+            bool checkPass= LocalStorage.LoginCard.SetPass(newPass);
+            if (checkPass)
+            {
+                _cardRepository.SaveChange();
+            }
+            else 
+            {
+                throw new Exception("The password must be 4 digits.");
+            }
+            
+
+        }
+
        
     }
 }

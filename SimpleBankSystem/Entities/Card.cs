@@ -16,7 +16,7 @@ namespace SimpleBankSystem.Entities
         public string HolderName { get; set; }
         public float Balance { get; set; }
         public bool IsActive { get; set; }
-        public string Password { get; set; }
+        public string Password { get; private set; }
 
         public int FailedAttemptCount { get; set; }
 
@@ -25,6 +25,16 @@ namespace SimpleBankSystem.Entities
 
         [InverseProperty("DestinationCard")]
         public List<Transaction> ReceivedTransactions { get; set; } = [];
+
+        public bool SetPass(string newPass)
+        {
+            if (newPass.Length == 4)
+            {
+                Password = newPass;
+                return true;
+            }
+            return false;
+        }
 
     }
 }

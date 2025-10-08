@@ -113,6 +113,20 @@ while (true)
                     }
                     break;
                 case 3:
+                    Console.WriteLine("please enter new pass");
+                    string newPass = Console.ReadLine();
+                    try
+                    {
+                        serviceCard.ChangePass(newPass);
+                        Console.WriteLine("change pass is done");
+                    }
+                    catch (Exception e)
+                    {
+
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case 4:
                     LocalStorage.LoginCard = null;
                     break;
 
@@ -130,5 +144,6 @@ void ShowMenu()
     Console.WriteLine("Please enter the number of the desired option.");
     Console.WriteLine("1.Transfer");
     Console.WriteLine("2.Reporting");
+    Console.WriteLine("4.Change Pass");
     Console.WriteLine("3.Exit");
 }
