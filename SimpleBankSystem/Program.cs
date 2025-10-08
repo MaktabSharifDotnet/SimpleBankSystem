@@ -94,8 +94,21 @@ while (true)
                         {
                             Console.WriteLine("please enter amount:");
                             amount = float.Parse(Console.ReadLine());
-                            serviceCard.Transfer(LocalStorage.LoginCard.CardNumber, destinationCard, amount);
-                            Console.WriteLine("transfer is done");
+                            try 
+                            {
+                                serviceCard.GenerateRandomeNumber();
+                                Console.WriteLine("\nA 5-digit verification code has been generated (check code.txt).");
+                                Console.WriteLine("Please enter the verification code to complete the transfer:");
+                                string code = Console.ReadLine();
+                                serviceCard.VerifyCode(code);
+                                serviceCard.Transfer(LocalStorage.LoginCard.CardNumber, destinationCard, amount);
+                                Console.WriteLine("transfer is done");
+                            }
+                            catch (Exception e) 
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                            
                         }
                         
                     }

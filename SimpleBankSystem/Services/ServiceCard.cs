@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using SimpleBankSystem.Exceptions;
+using Microsoft.Identity.Client;
 
 namespace SimpleBankSystem.Services
 {
@@ -176,6 +177,32 @@ namespace SimpleBankSystem.Services
             return name;
         }
 
-        
+        public void GenerateRandomeNumber() 
+        {
+          Random random = new Random();
+          int code = random.Next(10000, 100000);
+          DateTime dateTimeCode = DateTime.Now;
+          string saveInfo = $"{code}:{dateTimeCode}";
+          File.WriteAllText("code.txt", saveInfo);
+        }
+        public void VerifyCode(string userInput) 
+        {
+            if (!File.Exists("code.txt")) 
+            {
+                throw new Exception("Verification code was not generated.");
+            }
+            string codeInfo=File.ReadAllText("code.txt");
+            string[] parts = codeInfo.Split(":");
+            string code = parts[0];
+            DateTime dateTimeCode = DateTime.Parse(parts[1]);
+            if (DateTime.Now>dateTimeCode.AddMinutes(5))
+            {
+                throw new Exception("Verification code has expired.");
+            }
+            if (code!=userInput)
+            {
+                throw new Exception("Verification code is incorrect.");
+            }
+        }
     }
 }
